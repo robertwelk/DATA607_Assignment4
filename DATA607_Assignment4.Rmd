@@ -1,0 +1,56 @@
+---
+title: "Assignment4"
+author: "Rob Welk"
+date: "March 2, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Libraries
+```{r}
+library(tidyverse)
+```
+
+# Import csv dataset from GitHub
+```{r}
+data <- read.csv('Assignment4.csv', stringsAsFactors = F) %>% 
+        rename(carrier=X, flight.status=X.1) %>% 
+        as_tibble() 
+```
+
+#Wrangle data into tidy format 
+each column should be a variable and each row an observation 
+```{r}
+#add airline name to column 1
+data[c(2,5),1] <- c('Alaska','AM West')
+data
+# make tidy by putting into long format, and remove blank rows
+data.tidy <- data %>% 
+            gather(city, count, 3:7) %>% 
+            filter(!is.na(count)) %>% 
+            spread(flight.status,count) 
+data.tidy
+
+```
+```{r}
+data.tidy %>% mutate(ratio = `on time`/`delayed`) %>% ggplot(aes(x=city,y=ratio,fill=carrier)) + geom_bar(stat='identity',position = 'dodge')
+```
+
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+``````{r}
+``````{r}
+``````{r}
+```
