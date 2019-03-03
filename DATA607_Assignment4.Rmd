@@ -19,13 +19,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Libraries
-This script uses dplyr, tidyr, and ggplot from the tidyverse family
+This script uses dplyr, tidyr, and ggplot from the tidyverse family of packages.
 ```{r, message=F}
 library(tidyverse)
+library(magrittr)
 ```
 
-# Import csv dataset from GitHub
+# Import csv dataset from GitHub by cloning the GitHub repository https://github.com/robertwelk/DATA607_Assignment4.git
 ```{r}
+# The file is read in as a csv, with strings preserved as characters rather than factors. Two of the columns are renamed for clarity and ease in downstream processes. 
 data <- read.csv('Assignment4.csv', stringsAsFactors = F) %>% 
         rename(carrier=X, flight.status=X.1) %>% 
         as_tibble()
@@ -33,7 +35,8 @@ data
 ```
 
 # Wrangle data into tidy format 
-Each column should be a variable and each row an observation 
+Each column should be a variable and each row an observation. The data in its original format is considered to be wide as can be seen by the cross tabulation between carrier and individual cities.  The city names are themselves part of one variable yet are given unique columns.  Using tidyr, the function 'gather()' can be used to create a new column called 'city' with each displaying a unique value while preserving their associated counts.   
+For this data it makes sense to keep serparate the counts of flights for on-time and delayed, as they are each a distinct variable and should be given their own column.  The 'spread()' is then used to create a sperate variable for on-time counts and delayed flight counts for each city for each carrier.  The use of dplyr piping allows for readable code even while grouping processing steps toegether. 
 ```{r}
 #add airline name to column 1
 data[c(2,5),1] <- c('Alaska','AM West')
@@ -46,13 +49,22 @@ data.tidy <- data %>%
 data.tidy
 
 ```
+
 # Arrival time analysis
+To compare arrival delays between the two carriers, it is convenient to use a ratio describing the average number of on-time flight per a delayed flight.  This calcualtion can be made with ease due to the format of the now tidy data set.  Comparison is easy to make with a dodged barplot that displays much of the information (carrier, city, on-time/delayed flight counts) in one graph.  As can be seen, Alaska has a higher percentage of flight that are on time in each of the 5 cities compared to AM West.
 
 ```{r}
-data.tidy %>% 
+data.tidy %<>% 
   mutate(ratio = `on time`/`delayed`) %>% 
-  ggplot(aes(x=city,y=ratio,fill=carrier)) + 
+  mutate(total = `on time` + `delayed`)
+data.tidy
+
+ggplot(data.tidy, aes(x=city,y=ratio,fill=carrier)) + 
         geom_bar(stat='identity',position = 'dodge')
+
+
+
+
 
 ```
 
