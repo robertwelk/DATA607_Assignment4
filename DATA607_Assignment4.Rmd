@@ -2,15 +2,25 @@
 title: "Assignment4"
 author: "Rob Welk"
 date: "March 2, 2019"
-output: html_document
+output: 
+  html_document:
+    toc: true # table of content true
+    toc_depth: 3  # upto three depths of headings (specified by #, ## and ###)
+    number_sections: true  ## if you want number sections at each table header
+    theme: united  # many options for theme, this one is my favorite.
+    highlight: tango  # specifies the syntax highlighting style
+
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+
 # Libraries
-```{r}
+This script uses dplyr, tidyr, and ggplot from the tidyverse family
+```{r, message=F}
 library(tidyverse)
 ```
 
@@ -18,15 +28,16 @@ library(tidyverse)
 ```{r}
 data <- read.csv('Assignment4.csv', stringsAsFactors = F) %>% 
         rename(carrier=X, flight.status=X.1) %>% 
-        as_tibble() 
+        as_tibble()
+data
 ```
 
-#Wrangle data into tidy format 
-each column should be a variable and each row an observation 
+# Wrangle data into tidy format 
+Each column should be a variable and each row an observation 
 ```{r}
 #add airline name to column 1
 data[c(2,5),1] <- c('Alaska','AM West')
-data
+
 # make tidy by putting into long format, and remove blank rows
 data.tidy <- data %>% 
             gather(city, count, 3:7) %>% 
@@ -35,22 +46,14 @@ data.tidy <- data %>%
 data.tidy
 
 ```
+# Arrival time analysis
+
 ```{r}
-data.tidy %>% mutate(ratio = `on time`/`delayed`) %>% ggplot(aes(x=city,y=ratio,fill=carrier)) + geom_bar(stat='identity',position = 'dodge')
+data.tidy %>% 
+  mutate(ratio = `on time`/`delayed`) %>% 
+  ggplot(aes(x=city,y=ratio,fill=carrier)) + 
+        geom_bar(stat='identity',position = 'dodge')
+
 ```
 
 
-```{r}
-```
-
-```{r}
-```
-
-```{r}
-```
-
-```{r}
-``````{r}
-``````{r}
-``````{r}
-```
